@@ -63,3 +63,59 @@ Uczestnicy: użytkownik (projektant) i LLM (Claude, tryb planowania). LLM propon
 - Rekomendacje LLM przyjęto w 13 z 14 decyzji. Odrzucono jedną (`czas_trwania` dodany jako pochodny) oraz cały zaproponowany zestaw trybów pracy.
 - LLM sam zgłaszał miejsca, gdzie łatwo o halucynację (sztuczne id, CENNIK, nadtyp metody płatności, N5/N6), i proponował wariant zgodny z opisem.
 - Ryzyko efektu automatyzacji: wysoki odsetek przyjętych rekomendacji. Warto przy ocenie krzyżowej sprawdzić, czy któraś z nich nie była błędna.
+
+
+
+
+## Diagram ERD uzyskany w wyniku prac z LLM'em
+
+
+```mermaid
+---
+config:
+  themeCSS: ".divider ~ .divider { display: none; }"
+---
+erDiagram
+    %% Mermaid wymaga dwoch tokenow na atrybut: drugi to niewidoczna spacja U+200B, a CSS wyzej ukrywa jej pusta kolumne
+    UZYTKOWNIK {
+        id_uzytkownika ​
+        imie ​
+        nazwisko ​
+        email ​
+        telefon ​
+        data_rejestracji ​
+    }
+    KARTA_PLATNICZA {
+        numer_karty ​
+        data_waznosci ​
+        kod_cvc ​
+    }
+    TYP_POJAZDU {
+        nazwa ​
+        stawka_za_minute ​
+    }
+    POJAZD {
+        nr_identyfikacyjny ​
+        poziom_baterii ​
+        status ​
+        ostatnia_lokalizacja ​
+    }
+    WYPOZYCZENIE {
+        data_godzina_rozpoczecia ​
+        data_godzina_zakonczenia ​
+        lokalizacja_koncowa ​
+        czas_trwania ​
+    }
+    PLATNOSC {
+        data_transakcji ​
+        kwota ​
+        status ​
+    }
+
+    UZYTKOWNIK ||..o{ KARTA_PLATNICZA : posiada
+    UZYTKOWNIK ||..o{ WYPOZYCZENIE : dokonuje
+    POJAZD ||--o{ WYPOZYCZENIE : "jest wypozyczany w"
+    TYP_POJAZDU ||..o{ POJAZD : klasyfikuje
+    WYPOZYCZENIE ||--o{ PLATNOSC : "jest rozliczane przez"
+    KARTA_PLATNICZA ||..o{ PLATNOSC : obciazana
+```
